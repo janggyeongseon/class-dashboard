@@ -108,7 +108,7 @@
             <!-- Section 3: Presentation & Evaluation Hub -->
             <section id="evaluation" class="mb-8 bg-white p-6 rounded-2xl shadow-lg">
                 <h2 class="text-2xl font-bold mb-2">🎤 발표 진행 및 평가 허브</h2>
-                <p class="mb-6 text-gray-600">, </p>
+                <p class="mb-6 text-gray-600">학생들의 발표를 진행하고 평가하는 데 필요한 모든 도구입니다. 타이머, 발표 내용 체크리스트, 평가 루브릭을 활용하여 체계적으로 수업을 운영하세요.</p>
 
                 <!-- Student Roster and Status -->
                 <div id="roster-section" class="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
@@ -218,7 +218,7 @@
     <script type="module">
         // Firebase Imports are now handled directly inside this module scope
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, runTransaction, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let db, auth;
@@ -290,28 +290,35 @@
          */
         async function initializeFirebase() {
             try {
-                // Use directly imported functions: initializeApp, setLogLevel
-                setLogLevel('Debug'); 
-
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                // Note: The global __firebase_config is used but must be checked for existence
-                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}'); 
-
-                if (Object.keys(firebaseConfig).length === 0) {
-                    console.error("Firebase configuration is missing.");
+                // 🛑 중요: 아래 두 변수에 선생님의 실제 Firebase 설정을 붙여넣으세요!
+                // 1. Canvas 앱 ID를 복사하여 아래 문자열에 붙여넣으세요.
+                const appId = 'PLACEHOLDER_CANVAS_APP_ID'; 
+                
+                // 2. Firebase Console에서 '웹 앱' 설정을 복사하여 아래 JSON 객체에 붙여넣으세요.
+                const firebaseConfig = {
+                    apiKey: "PLACEHOLDER_API_KEY",
+                    authDomain: "PLACEHOLDER_AUTH_DOMAIN",
+                    projectId: "PLACEHOLDER_PROJECT_ID",
+                    storageBucket: "PLACEHOLDER_STORAGE_BUCKET",
+                    messagingSenderId: "PLACEHOLDER_MESSAGING_SENDER_ID",
+                    appId: "PLACEHOLDER_FIREBASE_APP_ID"
+                    // measurementId: "G-XXXXXXXXXX" // 측정 ID는 필수가 아닙니다.
+                };
+                
+                // 🛑 설정을 붙여넣지 않았다면 경고 메시지를 띄웁니다.
+                if (firebaseConfig.apiKey === "PLACEHOLDER_API_KEY") {
+                    console.error("Firebase Configuration Missing! Please replace PLACEHOLDER values in initializeFirebase().");
                     return;
                 }
 
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app); // Use directly imported function: getFirestore
-                auth = getAuth(app);     // Use directly imported function: getAuth
+                setLogLevel('Debug'); 
 
-                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken); // Use directly imported function: signInWithCustomToken
-                } else {
-                    await signInAnonymously(auth); // Use directly imported function: signInAnonymously
-                }
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app); 
+                auth = getAuth(app);     
+
+                // 외부 호스팅에서는 Canvas의 커스텀 토큰이 없으므로 익명 로그인으로 처리합니다.
+                await signInAnonymously(auth); 
 
                 userId = auth.currentUser?.uid || crypto.randomUUID();
                 
@@ -319,9 +326,7 @@
                 setupRosterListener(appId);
 
             } catch (error) {
-                // Log the final error source (likely module loading failure in file://)
                 console.error("Firebase initialization failed:", error);
-                console.error(">>> FIX ME: If you are running this file locally (file://), try using a local web server (like VS Code Live Server) or uploading to a hosting service (like GitHub Pages).");
                 // Fallback to initial display if Firebase fails
                 updateRosterStatuses({});
             }
@@ -331,7 +336,7 @@
          * Roster Status Logic (Firestore)
          */
         function getRosterDocRef(appId) {
-             // Use directly imported functions: doc, collection
+             // Collection path: /artifacts/{appId}/public/data/presentation_status/{ROSTER_DOC_ID}
              return doc(collection(
                  collection(
                      collection(db, 'artifacts'),
@@ -345,13 +350,12 @@
 
         function setupRosterListener(appId) {
             const rosterRef = getRosterDocRef(appId);
-            // Use directly imported function: onSnapshot
             onSnapshot(rosterRef, (docSnap) => {
                 if (docSnap.exists()) {
                     updateRosterStatuses(docSnap.data().status || {}); // Use update function
                 } else {
                     updateRosterStatuses({}); // No data yet
-                    // Change console.error to console.debug for cleaner logs during initial doc creation
+                    // Initial creation of the document if it doesn't exist
                     setDoc(rosterRef, { status: {} }, { merge: true }).catch(e => console.debug("Initial roster doc creation error (expected in some races):", e));
                 }
             }, (error) => {
@@ -359,36 +363,28 @@
             });
         }
         
-        // FIX: Reworked to use Transaction for authoritative status check
         async function toggleCompletionStatus(studentName) {
+            // Check if DB is available (i.e. configuration was successful)
             if (!db) {
-                // Log error if DB is genuinely not initialized (i.e., not just a local file problem)
                 console.error("Database not initialized. Cannot toggle status.");
                 return;
             }
 
-            const rosterRef = getRosterDocRef(typeof __app_id !== 'undefined' ? __app_id : 'default-app-id');
+            // Use the hardcoded appId from the scope
+            const appId = 'PLACEHOLDER_CANVAS_APP_ID'; 
+            const rosterRef = getRosterDocRef(appId);
             
             try {
-                // Use directly imported function: runTransaction
                 await runTransaction(db, async (transaction) => {
                     const docSnap = await transaction.get(rosterRef);
-                    
-                    // Removed the console.error for missing document here, 
-                    // as the subsequent code handles the creation gracefully.
-                    
                     const currentData = docSnap.data()?.status || {};
                     
-                    // 1. Get the authoritative current status from the database snapshot inside the transaction
+                    // Toggle status
                     const authoritativeCurrentStatus = currentData[studentName] || false; 
-                    
-                    // 2. Calculate the new status based on the authoritative status
                     const newStatus = !authoritativeCurrentStatus; 
-                    
-                    // 3. Update the data object
                     currentData[studentName] = newStatus;
                     
-                    // 4. Set the updated data
+                    // Set the updated data
                     transaction.set(rosterRef, { status: currentData });
                 });
                 

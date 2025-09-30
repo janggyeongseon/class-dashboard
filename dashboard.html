@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미래 주거 공간 디자인 수업 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: #F9F7F3;
+        }
+        .checklist-item::before {
+            content: '✓';
+            color: #A0AEC0; /* text-gray-400 */
+            margin-right: 0.75rem;
+            font-weight: bold;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .student-card {
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .completed {
+            background-color: #D1FAE5; /* Tailwind green-100 */
+            border-color: #34D399; /* Tailwind green-400 */
+            color: #065F46; /* Tailwind green-800 */
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-5xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">🚀 미래 주거 공간 디자인 발표 수업</h1>
+            <p class="text-lg text-gray-600 mt-2">VI. 주생활과 주거 공간 디자인</p>
+        </header>
+
+        <main>
+            <!-- Section 1: Report Template (지난 시간 활동 결과물) -->
+            <section id="report-template" class="mb-8 bg-white p-6 rounded-2xl shadow-lg border-l-4 border-blue-500">
+                <h2 class="text-2xl font-bold mb-4">📝 지난 시간 활동 결과물: 발표 보고서 구성</h2>
+                <p class="mb-6 text-gray-600">학생들이 작성한 4장 슬라이드 보고서의 핵심 구성 요소</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h3 class="font-bold text-lg text-blue-700 mb-2">1. 미래 사회 변화 요소</h3>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>변화 요소 1가지 제시 (AI, 기후위기 등)</li>
+                            <li>주거 공간에 미치는 영향 설명</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="font-bold text-lg text-green-700 mb-2">2. 라이프스타일 & 컨셉</h3>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>나의 라이프스타일 키워드 제시</li>
+                            <li>디자인 컨셉명 & 설명</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h3 class="font-bold text-lg text-yellow-700 mb-2">3. 공간 디자인 계획</h3>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>선택 공간 (거실/주방/침실/욕실 중 택1)</li>
+                            <li>주요 기능 및 활용 기술</li>
+                            <li>디자인 요소 및 선택 이유</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <h3 class="font-bold text-lg text-red-700 mb-2">4. 시각 자료</h3>
+                        <p class="text-sm text-gray-700">
+                            스케치 또는 키워드 콜라주 등 아이디어를 시각화한 자료
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Section 2: Lesson Overview -->
+            <section id="overview" class="mb-8 bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">🎯 수업 개요 및 목표</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-stone-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">학습 목표</h3>
+                        <p class="text-gray-600">미래 사회 변화를 고려한 주거 공간 디자인을 구상하고 발표할 수 있다.</p>
+                    </div>
+                    <div class="bg-stone-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">성취 기준</h3>
+                        <p class="text-gray-600">[12가정-02-12] 주거 디자인의 요소와 원리를 이해하여 거주자의 라이프스타일을 반영한 주거를 창안한다.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: Presentation & Evaluation Hub -->
+            <section id="evaluation" class="mb-8 bg-white p-6 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">🎤 발표 진행 및 평가 허브</h2>
+                <p class="mb-6 text-gray-600">, </p>
+
+                <!-- Student Roster and Status -->
+                <div id="roster-section" class="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">🗣️ 발표 순서 및 완료 상태 (클릭하여 완료 표시)</h3>
+                    <div id="student-roster-list" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                        <!-- Roster Cards will be generated here -->
+                        <!-- Initial load will display all cards as '미완료' -->
+                    </div>
+                </div>
+                <!-- END ROSTER -->
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Timer and Checklist (Col 1) -->
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">발표 타이머 (3분)</h3>
+                            <div class="bg-gray-100 p-4 rounded-lg text-center">
+                                <!-- Timer Display: text-gray-800 is the default color -->
+                                <div id="timer-display" class="text-5xl font-mono font-bold text-gray-800 mb-4">03:00</div>
+                                <div class="flex justify-center space-x-3">
+                                    <!-- Start/Pause/Resume Button -->
+                                    <button id="start-timer" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition-colors">시작</button>
+                                    <!-- Reset Button -->
+                                    <button id="reset-timer" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition-colors">리셋</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-3">발표 내용 점검 체크리스트</h3>
+                            <div id="accordion-header" class="bg-gray-100 p-4 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                                <div class="flex justify-between items-center font-semibold">
+                                    <span>발표 시 필수 요소 점검 (클릭하여 열기)</span>
+                                    <span id="accordion-icon" class="transform transition-transform duration-300">▼</span>
+                                </div>
+                            </div>
+                            <!-- This checklist mirrors the report template above but serves as a quick visual check during evaluation -->
+                            <div id="accordion-content" class="accordion-content bg-white border border-t-0 rounded-b-lg">
+                                <ul class="p-4 space-y-3 text-gray-700">
+                                    <li class="checklist-item">미래 사회 변화 요소: 변화 요소 제시 및 주거 공간에 미치는 영향 설명</li>
+                                    <li class="checklist-item">라이프스타일 & 컨셉: 자신의 라이프스타일 키워드와 디자인 컨셉명/설명</li>
+                                    <li class="checklist-item">공간 디자인 계획: 선택 공간, 주요 기능/기술, 디자인 요소 및 선택 이유</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Rubric (Col 2) -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3">발표 평가 기준 (루브릭)</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-700 text-white">
+                                    <tr>
+                                        <th class="p-3 font-semibold">등급</th>
+                                        <th class="p-3 font-semibold">점수</th>
+                                        <th class="p-3 font-semibold">평가 기준 (발표력)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="p-3 font-bold text-blue-600">A</td>
+                                        <td class="p-3">30점</td>
+                                        <td class="p-3">발표 내용이 명확하고 논리적이며, 전달력이 뛰어나다.</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="p-3 font-bold text-green-600">B</td>
+                                        <td class="p-3">25점</td>
+                                        <td class="p-3">발표 내용이 비교적 명확하나, 논리적 근거가 일부 부족하다.</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="p-3 font-bold text-yellow-600">C</td>
+                                        <td class="p-3">20점</td>
+                                        <td class="p-3">발표 내용이 불분명하거나 준비가 미흡하다.</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="p-3 font-bold text-red-600">D</td>
+                                        <td class="p-3">0점</td>
+                                        <td class="p-3">발표를 하지 않았다.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- FOOTER SECTION -->
+        <footer class="text-center mt-10 pt-8 border-t border-gray-300 bg-gray-50 rounded-2xl shadow-md p-6">
+            <h3 class="text-xl sm:text-2xl font-extrabold text-gray-900 mb-4">
+                다음 차시 안내
+            </h3>
+            <!-- Using a placeholder image URL for visual guidance -->
+            <div class="flex justify-center items-center mb-4">
+                <img src="https://placehold.co/150x80/E0F2F7/3B82F6?text=Fashion" alt="패션 스타일링 이미지" class="rounded-lg shadow-inner">
+            </div>
+            <p class="text-xl text-blue-700 font-semibold">
+                👕 🧢 💍 패션 스타일링과 의류 마케팅
+            </p>
+            <p class="text-base text-gray-600 mt-2">
+                (준비물: 자신이 선호하는 패션 아이템 3가지 스케치)
+            </p>
+        </footer>
+        <!-- END FOOTER SECTION -->
+    </div>
+
+    <script type="module">
+        // Firebase Imports are now handled directly inside this module scope
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, runTransaction, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db, auth;
+        let userId = null;
+        const ROSTER_DOC_ID = "roster_status";
+        
+        // Student List (Static Data provided by the user)
+        const studentRoster = [
+            "김하늬", "정하윤", "조서영", "박소영", "임소율", "안채영", "박준희", "김샤론", "김예은",
+            "정수영", "곽예린", "홍예서", "안소민", "이하은", "김지유", "박유선", "박예림", "최정은",
+            "천예린", "서예지", "김정아", "이혜빈", "조유선", "이채원", "이지민", "지효린", "김하은",
+            "육서진", "신소희", "이재희", "윤지현", "강다연"
+        ];
+        
+        // UI Elements
+        const rosterList = document.getElementById('student-roster-list');
+        
+        /**
+         * Roster Rendering Functions
+         */
+
+        // 1. Initial Render: Display all student names as '미완료' immediately
+        function renderInitialRosterCards() {
+            rosterList.innerHTML = ''; // Clear existing content
+            studentRoster.forEach((student, index) => {
+                const card = document.createElement('div');
+                card.id = `student-card-${student}`; // Use name as ID for quick lookup
+                card.className = `student-card p-2 text-center rounded-lg border-2 bg-white border-gray-300`;
+                card.innerHTML = `
+                    <p class="text-xs font-medium text-gray-500">${index + 1}번</p>
+                    <p class="font-bold text-sm">${student}</p>
+                    <p class="text-xs text-gray-400">미완료</p>
+                `;
+                // Attach the click handler.
+                card.addEventListener('click', () => toggleCompletionStatus(student)); 
+                rosterList.appendChild(card);
+            });
+        }
+        
+        // 2. Status Update: Apply fetched statuses to the existing cards
+        function updateRosterStatuses(statuses) {
+            studentRoster.forEach((student) => {
+                const isCompleted = statuses[student] || false;
+                const card = document.getElementById(`student-card-${student}`);
+                
+                if (card) {
+                    // Update classes
+                    card.classList.toggle('completed', isCompleted);
+                    card.classList.toggle('bg-white', !isCompleted);
+                    card.classList.toggle('border-green-400', isCompleted);
+                    card.classList.toggle('border-gray-300', !isCompleted);
+
+                    // Update status text
+                    card.querySelector('p:last-child').textContent = isCompleted ? '완료' : '미완료';
+                    card.querySelector('p:last-child').classList.toggle('text-green-700', isCompleted);
+                    card.querySelector('p:last-child').classList.toggle('font-semibold', isCompleted);
+                    card.querySelector('p:last-child').classList.toggle('text-gray-400', !isCompleted);
+                    
+                    // Re-attach listener to the existing card (ensures closure scope is current)
+                    const existingListener = card.cloneNode(true);
+                    existingListener.addEventListener('click', () => toggleCompletionStatus(student));
+                    card.parentNode.replaceChild(existingListener, card);
+                }
+            });
+        }
+        
+        /**
+         * Firebase Initialization and Authentication
+         */
+        async function initializeFirebase() {
+            try {
+                // Use directly imported functions: initializeApp, setLogLevel
+                setLogLevel('Debug'); 
+
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                // Note: The global __firebase_config is used but must be checked for existence
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}'); 
+
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase configuration is missing.");
+                    return;
+                }
+
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app); // Use directly imported function: getFirestore
+                auth = getAuth(app);     // Use directly imported function: getAuth
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken); // Use directly imported function: signInWithCustomToken
+                } else {
+                    await signInAnonymously(auth); // Use directly imported function: signInAnonymously
+                }
+
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                
+                // Start listening for roster status changes AFTER authentication
+                setupRosterListener(appId);
+
+            } catch (error) {
+                // Log the final error source (likely module loading failure in file://)
+                console.error("Firebase initialization failed:", error);
+                console.error(">>> FIX ME: If you are running this file locally (file://), try using a local web server (like VS Code Live Server) or uploading to a hosting service (like GitHub Pages).");
+                // Fallback to initial display if Firebase fails
+                updateRosterStatuses({});
+            }
+        }
+
+        /**
+         * Roster Status Logic (Firestore)
+         */
+        function getRosterDocRef(appId) {
+             // Use directly imported functions: doc, collection
+             return doc(collection(
+                 collection(
+                     collection(db, 'artifacts'),
+                     appId,
+                     'public'
+                 ),
+                 'data',
+                 'presentation_status'
+             ), ROSTER_DOC_ID);
+        }
+
+        function setupRosterListener(appId) {
+            const rosterRef = getRosterDocRef(appId);
+            // Use directly imported function: onSnapshot
+            onSnapshot(rosterRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    updateRosterStatuses(docSnap.data().status || {}); // Use update function
+                } else {
+                    updateRosterStatuses({}); // No data yet
+                    // Change console.error to console.debug for cleaner logs during initial doc creation
+                    setDoc(rosterRef, { status: {} }, { merge: true }).catch(e => console.debug("Initial roster doc creation error (expected in some races):", e));
+                }
+            }, (error) => {
+                console.error("Error setting up roster listener:", error);
+            });
+        }
+        
+        // FIX: Reworked to use Transaction for authoritative status check
+        async function toggleCompletionStatus(studentName) {
+            if (!db) {
+                // Log error if DB is genuinely not initialized (i.e., not just a local file problem)
+                console.error("Database not initialized. Cannot toggle status.");
+                return;
+            }
+
+            const rosterRef = getRosterDocRef(typeof __app_id !== 'undefined' ? __app_id : 'default-app-id');
+            
+            try {
+                // Use directly imported function: runTransaction
+                await runTransaction(db, async (transaction) => {
+                    const docSnap = await transaction.get(rosterRef);
+                    
+                    // Removed the console.error for missing document here, 
+                    // as the subsequent code handles the creation gracefully.
+                    
+                    const currentData = docSnap.data()?.status || {};
+                    
+                    // 1. Get the authoritative current status from the database snapshot inside the transaction
+                    const authoritativeCurrentStatus = currentData[studentName] || false; 
+                    
+                    // 2. Calculate the new status based on the authoritative status
+                    const newStatus = !authoritativeCurrentStatus; 
+                    
+                    // 3. Update the data object
+                    currentData[studentName] = newStatus;
+                    
+                    // 4. Set the updated data
+                    transaction.set(rosterRef, { status: currentData });
+                });
+                
+            } catch (error) {
+                console.error("Error updating student status via transaction:", error);
+            }
+        }
+        
+        // --- Timer Logic (Unchanged) ---
+        function updateTimerDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${minutes}:${seconds}`;
+
+            // Visual warning: red for <= 30 seconds
+            if (totalSeconds <= 30 && totalSeconds > 0) {
+                timerDisplay.classList.add('text-red-600');
+                timerDisplay.classList.remove('text-gray-800');
+            } else if (totalSeconds === 0) {
+                timerDisplay.classList.add('text-red-600');
+            } else {
+                timerDisplay.classList.remove('text-red-600');
+                timerDisplay.classList.add('text-gray-800');
+            }
+        }
+        
+        let timerInterval = null;
+        let totalSeconds = 180;
+        let isRunning = false;
+        
+        function startTimer() {
+            const startButton = document.getElementById('start-timer');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isRunning = false;
+                startButton.textContent = '재개';
+                startButton.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                startButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                return;
+            }
+
+            if (totalSeconds <= 0) { resetTimer(); return; }
+
+            isRunning = true;
+            startButton.textContent = '일시 정지';
+            startButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+            startButton.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+            
+            timerInterval = setInterval(() => {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    isRunning = false;
+                    startButton.textContent = '시작';
+                    startButton.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    startButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            const startButton = document.getElementById('start-timer');
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isRunning = false;
+            totalSeconds = 180;
+            updateTimerDisplay();
+            startButton.textContent = '시작';
+            startButton.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+            startButton.classList.add('bg-green-600', 'hover:bg-green-700');
+        }
+
+        // --- Event Listeners and Initialization ---
+        document.addEventListener('DOMContentLoaded', function () {
+            // RENDER CARDS IMMEDIATELY
+            renderInitialRosterCards();
+            
+            // START FIREBASE CONNECTION ASYNCHRONOUSLY
+            initializeFirebase(); 
+
+            // 아코디언 (체크리스트)
+            const accordionHeader = document.getElementById('accordion-header');
+            const accordionContent = document.getElementById('accordion-content');
+            const accordionIcon = document.getElementById('accordion-icon');
+
+            accordionHeader.addEventListener('click', () => {
+                const isExpanded = accordionContent.style.maxHeight;
+                if (isExpanded) {
+                    accordionContent.style.maxHeight = null;
+                    accordionIcon.style.transform = 'rotate(0deg)';
+                } else {
+                    accordionContent.style.maxHeight = accordionContent.scrollHeight + "px";
+                    accordionIcon.style.transform = 'rotate(180deg)';
+                }
+            });
+
+            // Timer Event Listeners
+            document.getElementById('start-timer').addEventListener('click', startTimer);
+            document.getElementById('reset-timer').addEventListener('click', resetTimer);
+
+            updateTimerDisplay(); // Initial display
+        });
+    </script>
+</body>
+</html>

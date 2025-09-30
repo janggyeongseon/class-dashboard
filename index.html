@@ -115,7 +115,6 @@
                     <h3 class="text-xl font-semibold mb-4 text-gray-800">🗣️ 발표 순서 및 완료 상태 (클릭하여 완료 표시)</h3>
                     <div id="student-roster-list" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
                         <!-- Roster Cards will be generated here -->
-                        <!-- Initial load will display all cards as '미완료' -->
                     </div>
                 </div>
                 <!-- END ROSTER -->
@@ -215,15 +214,8 @@
         <!-- END FOOTER SECTION -->
     </div>
 
-    <script type="module">
-        // Firebase Imports are now handled directly inside this module scope
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, runTransaction, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        let db, auth;
-        let userId = null;
-        const ROSTER_DOC_ID = "roster_status";
+    <script>
+        // 이 스크립트는 Firebase 라이브러리 없이, DOM 조작만으로 클릭 기능을 구현합니다.
         
         // Student List (Static Data provided by the user)
         const studentRoster = [
@@ -233,167 +225,67 @@
             "육서진", "신소희", "이재희", "윤지현", "강다연"
         ];
         
-        // UI Elements
+        // In-memory status storage (will be cleared on refresh)
+        let localStatus = {};
+        
         const rosterList = document.getElementById('student-roster-list');
         
         /**
-         * Roster Rendering Functions
+         * Roster Rendering Functions (Non-Firebase)
          */
-
-        // 1. Initial Render: Display all student names as '미완료' immediately
         function renderInitialRosterCards() {
-            rosterList.innerHTML = ''; // Clear existing content
+            rosterList.innerHTML = '';
             studentRoster.forEach((student, index) => {
+                const isCompleted = localStatus[student] || false;
                 const card = document.createElement('div');
-                card.id = `student-card-${student}`; // Use name as ID for quick lookup
-                card.className = `student-card p-2 text-center rounded-lg border-2 bg-white border-gray-300`;
+                card.id = `student-card-${student}`; 
+                
+                // Set initial classes based on localStatus
+                const baseClasses = `student-card p-2 text-center rounded-lg border-2`;
+                const statusClasses = isCompleted ? 'completed border-green-400' : 'bg-white border-gray-300';
+                card.className = `${baseClasses} ${statusClasses}`;
+
+                const statusTextClass = isCompleted ? 'text-green-700 font-semibold' : 'text-gray-400';
+                const statusText = isCompleted ? '완료' : '미완료';
+
                 card.innerHTML = `
                     <p class="text-xs font-medium text-gray-500">${index + 1}번</p>
                     <p class="font-bold text-sm">${student}</p>
-                    <p class="text-xs text-gray-400">미완료</p>
+                    <p class="text-xs ${statusTextClass}">${statusText}</p>
                 `;
-                // Attach the click handler.
-                card.addEventListener('click', () => toggleCompletionStatus(student)); 
+
+                // Attach the local click handler.
+                card.addEventListener('click', () => toggleCompletionStatusLocal(student, card)); 
                 rosterList.appendChild(card);
             });
         }
         
-        // 2. Status Update: Apply fetched statuses to the existing cards
-        function updateRosterStatuses(statuses) {
-            studentRoster.forEach((student) => {
-                const isCompleted = statuses[student] || false;
-                const card = document.getElementById(`student-card-${student}`);
-                
-                if (card) {
-                    // Update classes
-                    card.classList.toggle('completed', isCompleted);
-                    card.classList.toggle('bg-white', !isCompleted);
-                    card.classList.toggle('border-green-400', isCompleted);
-                    card.classList.toggle('border-gray-300', !isCompleted);
-
-                    // Update status text
-                    card.querySelector('p:last-child').textContent = isCompleted ? '완료' : '미완료';
-                    card.querySelector('p:last-child').classList.toggle('text-green-700', isCompleted);
-                    card.querySelector('p:last-child').classList.toggle('font-semibold', isCompleted);
-                    card.querySelector('p:last-child').classList.toggle('text-gray-400', !isCompleted);
-                    
-                    // Re-attach listener to the existing card (ensures closure scope is current)
-                    const existingListener = card.cloneNode(true);
-                    existingListener.addEventListener('click', () => toggleCompletionStatus(student));
-                    card.parentNode.replaceChild(existingListener, card);
-                }
-            });
-        }
-        
-        /**
-         * Firebase Initialization and Authentication
-         */
-        async function initializeFirebase() {
-            try {
-                // 🛑 중요: 아래 두 변수에 선생님의 실제 Firebase 설정을 붙여넣으세요!
-                // 1. Canvas 앱 ID를 복사하여 아래 문자열에 붙여넣으세요.
-                const appId = 'PLACEHOLDER_CANVAS_APP_ID'; 
-                
-                // 2. Firebase Console에서 '웹 앱' 설정을 복사하여 아래 JSON 객체에 붙여넣으세요.
-                const firebaseConfig = {
-                    apiKey: "PLACEHOLDER_API_KEY",
-                    authDomain: "PLACEHOLDER_AUTH_DOMAIN",
-                    projectId: "PLACEHOLDER_PROJECT_ID",
-                    storageBucket: "PLACEHOLDER_STORAGE_BUCKET",
-                    messagingSenderId: "PLACEHOLDER_MESSAGING_SENDER_ID",
-                    appId: "PLACEHOLDER_FIREBASE_APP_ID"
-                    // measurementId: "G-XXXXXXXXXX" // 측정 ID는 필수가 아닙니다.
-                };
-                
-                // 🛑 설정을 붙여넣지 않았다면 경고 메시지를 띄웁니다.
-                if (firebaseConfig.apiKey === "PLACEHOLDER_API_KEY") {
-                    console.error("Firebase Configuration Missing! Please replace PLACEHOLDER values in initializeFirebase().");
-                    return;
-                }
-
-                setLogLevel('Debug'); 
-
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app); 
-                auth = getAuth(app);     
-
-                // 외부 호스팅에서는 Canvas의 커스텀 토큰이 없으므로 익명 로그인으로 처리합니다.
-                await signInAnonymously(auth); 
-
-                userId = auth.currentUser?.uid || crypto.randomUUID();
-                
-                // Start listening for roster status changes AFTER authentication
-                setupRosterListener(appId);
-
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                // Fallback to initial display if Firebase fails
-                updateRosterStatuses({});
-            }
-        }
-
-        /**
-         * Roster Status Logic (Firestore)
-         */
-        function getRosterDocRef(appId) {
-             // Collection path: /artifacts/{appId}/public/data/presentation_status/{ROSTER_DOC_ID}
-             return doc(collection(
-                 collection(
-                     collection(db, 'artifacts'),
-                     appId,
-                     'public'
-                 ),
-                 'data',
-                 'presentation_status'
-             ), ROSTER_DOC_ID);
-        }
-
-        function setupRosterListener(appId) {
-            const rosterRef = getRosterDocRef(appId);
-            onSnapshot(rosterRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    updateRosterStatuses(docSnap.data().status || {}); // Use update function
-                } else {
-                    updateRosterStatuses({}); // No data yet
-                    // Initial creation of the document if it doesn't exist
-                    setDoc(rosterRef, { status: {} }, { merge: true }).catch(e => console.debug("Initial roster doc creation error (expected in some races):", e));
-                }
-            }, (error) => {
-                console.error("Error setting up roster listener:", error);
-            });
-        }
-        
-        async function toggleCompletionStatus(studentName) {
-            // Check if DB is available (i.e. configuration was successful)
-            if (!db) {
-                console.error("Database not initialized. Cannot toggle status.");
-                return;
-            }
-
-            // Use the hardcoded appId from the scope
-            const appId = 'PLACEHOLDER_CANVAS_APP_ID'; 
-            const rosterRef = getRosterDocRef(appId);
+        // Local Toggle Logic
+        function toggleCompletionStatusLocal(studentName, cardElement) {
+            const isCompleted = localStatus[studentName] || false;
+            const newStatus = !isCompleted;
             
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const docSnap = await transaction.get(rosterRef);
-                    const currentData = docSnap.data()?.status || {};
-                    
-                    // Toggle status
-                    const authoritativeCurrentStatus = currentData[studentName] || false; 
-                    const newStatus = !authoritativeCurrentStatus; 
-                    currentData[studentName] = newStatus;
-                    
-                    // Set the updated data
-                    transaction.set(rosterRef, { status: currentData });
-                });
-                
-            } catch (error) {
-                console.error("Error updating student status via transaction:", error);
-            }
+            localStatus[studentName] = newStatus; // Update in-memory status
+
+            // Update card appearance immediately
+            cardElement.classList.toggle('completed', newStatus);
+            cardElement.classList.toggle('bg-white', !newStatus);
+            cardElement.classList.toggle('border-green-400', newStatus);
+            cardElement.classList.toggle('border-gray-300', !newStatus);
+
+            // Update status text
+            const statusParagraph = cardElement.querySelector('p:last-child');
+            statusParagraph.textContent = newStatus ? '완료' : '미완료';
+            statusParagraph.classList.toggle('text-green-700', newStatus);
+            statusParagraph.classList.toggle('font-semibold', newStatus);
+            statusParagraph.classList.toggle('text-gray-400', !newStatus);
         }
-        
+
         // --- Timer Logic (Unchanged) ---
+        let totalSeconds = 180;
+        let isRunning = false;
+        let timerInterval = null;
+
         function updateTimerDisplay() {
             const timerDisplay = document.getElementById('timer-display');
             const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -411,10 +303,6 @@
                 timerDisplay.classList.add('text-gray-800');
             }
         }
-        
-        let timerInterval = null;
-        let totalSeconds = 180;
-        let isRunning = false;
         
         function startTimer() {
             const startButton = document.getElementById('start-timer');
@@ -464,12 +352,9 @@
 
         // --- Event Listeners and Initialization ---
         document.addEventListener('DOMContentLoaded', function () {
-            // RENDER CARDS IMMEDIATELY
+            // RENDER CARDS IMMEDIATELY (using local storage)
             renderInitialRosterCards();
             
-            // START FIREBASE CONNECTION ASYNCHRONOUSLY
-            initializeFirebase(); 
-
             // 아코디언 (체크리스트)
             const accordionHeader = document.getElementById('accordion-header');
             const accordionContent = document.getElementById('accordion-content');
